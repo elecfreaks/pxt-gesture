@@ -1,6 +1,3 @@
-/**
- * Grove Gestures
- */
 const initRegisterArray: number[] = [
     0xEF, 0x00, 0x32, 0x29, 0x33, 0x01, 0x34, 0x00, 0x35, 0x01, 0x36, 0x00, 0x37, 0x07, 0x38, 0x17,
     0x39, 0x06, 0x3A, 0x12, 0x3F, 0x00, 0x40, 0x02, 0x41, 0xFF, 0x42, 0x01, 0x46, 0x2D, 0x47, 0x0F,
@@ -31,8 +28,11 @@ const initRegisterArray: number[] = [
     0x6F, 0x32, 0x71, 0x00, 0x72, 0x01, 0x73, 0x35, 0x74, 0x00, 0x75, 0x33, 0x76, 0x31, 0x77, 0x01,
     0x7C, 0x84, 0x7D, 0x03, 0x7E, 0x01
 ];
- 
-enum GroveGestures {
+
+/**
+ * Grove Gestures
+ */
+enum GroveGesture {
     //% block=None
     None = 0,
     //% block=Right
@@ -54,22 +54,19 @@ enum GroveGestures {
     //% block=Wave
     Wave = 9
 }
-
 /**
  * Functions to operate Grove module.
  */
-//% weight=10 color=#9F79EE icon="\uf108" block="Grove Gesture"
-namespace grovegesture {
+//% weight=10 color=#9F79EE icon="\uf108" block="Grove"
+namespace grove {
     /**
      * 
      */
     export class PAJ7620 {
         private paj7620WriteReg(addr: number, cmd: number) {
             let buf: Buffer = pins.createBuffer(2);
-
             buf[0] = addr;
             buf[1] = cmd;
-
             pins.i2cWriteBuffer(0x73, buf, false);
         }
 
@@ -92,16 +89,13 @@ namespace grovegesture {
 
         private paj7620Init() {
             let temp = 0;
-
             this.paj7620SelectBank(0);
-
             temp = this.paj7620ReadReg(0);
             if (temp == 0x20) {
                 for (let i = 0; i < 438; i += 2) {
                     this.paj7620WriteReg(initRegisterArray[i], initRegisterArray[i + 1]);
                 }
             }
-
             this.paj7620SelectBank(0);
         }
 
@@ -109,6 +103,7 @@ namespace grovegesture {
          * Create a new driver of Grove - Gesture
          */
         //% blockId=grove_gesture_init block="%strip|initiate the Grove - Gesture"
+        //% advanced=true
         init() {
             this.paj7620Init();
             basic.pause(200);
@@ -118,79 +113,99 @@ namespace grovegesture {
          * Detect and recognize the gestures from Grove - Gesture
          */
         //% blockId=grove_gesture_read block="%strip|get gesture"
+        //% advanced=true
         read(): number {
             let data = 0, result = 0;
 
             data = this.paj7620ReadReg(0x43);
             switch (data) {
                 case 0x01:
-                    result = GroveGestures.Right;
-                break;
+                    result = GroveGesture.Right;
+                    break;
 
                 case 0x02:
-                    result = GroveGestures.Left;
-                break;
+                    result = GroveGesture.Left;
+                    break;
 
                 case 0x04:
-                    result = GroveGestures.Up;
-                break;
+                    result = GroveGesture.Up;
+                    break;
 
                 case 0x08:
-                    result = GroveGestures.Down;
-                break;
+                    result = GroveGesture.Down;
+                    break;
 
                 case 0x10:
-                    result = GroveGestures.Forward;
-                break;
+                    result = GroveGesture.Forward;
+                    break;
 
                 case 0x20:
-                    result = GroveGestures.Backward;
-                break;
+                    result = GroveGesture.Backward;
+                    break;
 
                 case 0x40:
-                    result = GroveGestures.Clockwise;
-                break;
+                    result = GroveGesture.Clockwise;
+                    break;
 
                 case 0x80:
-                    result = GroveGestures.Anticlockwise;
-                break;
+                    result = GroveGesture.Anticlockwise;
+                    break;
 
                 default:
                     data = this.paj7620ReadReg(0x44);
                     if (data == 0x01)
-                        result = GroveGestures.Wave;
-                break;
+                        result = GroveGesture.Wave;
+                    break;
             }
 
             return result;
         }
     }
-    
-    
+
     const gestureEventId = 3100;
-    let lastGesture = GroveGestures.None;
+    let lastGesture = GroveGesture.None;
     let paj7620 = new PAJ7620();
-    
+
+    /**
+     * init Grove Gesture modules
+     * 
+     */
+    //% blockId=grove_initgesture block="init gesture"
+    export function initGesture() {
+        if (!paj7620) {
+            paj7620.init();
+        }
+    }
+
+    /**
+     * get Grove Gesture modle
+     * 
+     */
+    //% blockId=grove_getgesture block="get gesture model"
+    export function getGestureModel(): number {
+        return paj7620.read();
+    }
+
     /**
      * Do something when a gesture is detected by Grove - Gesture
      * @param gesture type of gesture to detect
      * @param handler code to run
      */
     //% blockId=grove_gesture_create_event block="on Gesture|%gesture"
-    export function onGesture(gesture: GroveGestures, handler: () => void) {
+    export function onGesture(gesture: GroveGesture, handler: () => void) {
         control.onEvent(gestureEventId, gesture, handler);
-        if (!paj7620) {
-            paj7620.init();
-            control.inBackground(() => {
-                while(true) {
-                    const gesture = paj7620.read();
-                    if (gesture != lastGesture) {
-                        lastGesture = gesture;
-                        control.raiseEvent(gestureEventId, lastGesture);
-                    }
-                    basic.pause(50);
+        paj7620.init();
+        control.inBackground(() => {
+            while (true) {
+                const gesture = paj7620.read();
+                if (gesture != lastGesture) {
+                    lastGesture = gesture;
+                    control.raiseEvent(gestureEventId, lastGesture);
                 }
-            })
-        }
+                basic.pause(50);
+            }
+        })
     }
+
+
 }
