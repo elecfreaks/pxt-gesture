@@ -1,0 +1,17 @@
+{
+  "gesture.getGestureModel|block": "获取手势代码",
+  "gesture.initGesture|block": "初始化手势识别传感器",
+  "gesture.onGesture|block": "当识别到手势|%gesture",
+  "gestureType.Anticlockwise|block": "逆时针",
+  "gestureType.Backward|block": "向后",
+  "gestureType.Clockwise|block": "顺时针",
+  "gestureType.Down|block": "向下",
+  "gestureType.Forward|block": "向前",
+  "gestureType.Left|block": "向左",
+  "gestureType.None|block": "无",
+  "gestureType.Right|block": "向右",
+  "gestureType.Up|block": "向上",
+  "gestureType.Wave|block": "挥手",
+  "gesture|block": "手势识别",
+  "{id:category}Gesture": "手势识别"
+}

@@ -8,7 +8,8 @@
     },
     "files": [
         "README.md",
-        "Gesture.ts"
+        "Gesture.ts",
+        "_locales/zh/Gesture-strings.json"
     ],
     "testFiles": [
         "tests.ts"

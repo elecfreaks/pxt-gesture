@@ -1,0 +1,17 @@
+{
+  "gesture.getGestureModel|block": "get gesture model",
+  "gesture.initGesture|block": "init gesture",
+  "gesture.onGesture|block": "on Gesture|%gesture",
+  "gestureType.Anticlockwise|block": "Anticlockwise",
+  "gestureType.Backward|block": "Backward",
+  "gestureType.Clockwise|block": "Clockwise",
+  "gestureType.Down|block": "Down",
+  "gestureType.Forward|block": "Forward",
+  "gestureType.Left|block": "Left",
+  "gestureType.None|block": "None",
+  "gestureType.Right|block": "Right",
+  "gestureType.Up|block": "Up",
+  "gestureType.Wave|block": "Wave",
+  "gesture|block": "Gesture",
+  "{id:category}Gesture": "Gesture"
+}

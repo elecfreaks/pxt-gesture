@@ -30,9 +30,9 @@ const initRegisterArray: number[] = [
 ];
 
 /**
- * Grove Gestures
+ *  Gestures
  */
-enum GroveGesture {
+enum gestureType {
     //% block=None
     None = 0,
     //% block=Right
@@ -55,13 +55,11 @@ enum GroveGesture {
     Wave = 9
 }
 /**
- * Functions to operate Grove module.
+ * Functions to operate  module.
  */
-//% weight=10 color=#9F79EE icon="\uf108" block="Grove"
-namespace grove {
-    /**
-     * 
-     */
+//% weight=10 color=#9F79EE icon="\uf108" block="Gesture"
+namespace gesture {
+
     export class PAJ7620 {
         private paj7620WriteReg(addr: number, cmd: number) {
             let buf: Buffer = pins.createBuffer(2);
@@ -98,63 +96,50 @@ namespace grove {
             }
             this.paj7620SelectBank(0);
         }
-
-        /**
-         * Create a new driver of Grove - Gesture
-         */
-        //% blockId=grove_gesture_init block="%strip|initiate the Grove - Gesture"
-        //% advanced=true
         init() {
             this.paj7620Init();
             basic.pause(200);
         }
-
-        /**
-         * Detect and recognize the gestures from Grove - Gesture
-         */
-        //% blockId=grove_gesture_read block="%strip|get gesture"
-        //% advanced=true
         read(): number {
             let data = 0, result = 0;
-
             data = this.paj7620ReadReg(0x43);
             switch (data) {
                 case 0x01:
-                    result = GroveGesture.Right;
+                    result = gestureType.Right;
                     break;
 
                 case 0x02:
-                    result = GroveGesture.Left;
+                    result = gestureType.Left;
                     break;
 
                 case 0x04:
-                    result = GroveGesture.Up;
+                    result = gestureType.Up;
                     break;
 
                 case 0x08:
-                    result = GroveGesture.Down;
+                    result = gestureType.Down;
                     break;
 
                 case 0x10:
-                    result = GroveGesture.Forward;
+                    result = gestureType.Forward;
                     break;
 
                 case 0x20:
-                    result = GroveGesture.Backward;
+                    result = gestureType.Backward;
                     break;
 
                 case 0x40:
-                    result = GroveGesture.Clockwise;
+                    result = gestureType.Clockwise;
                     break;
 
                 case 0x80:
-                    result = GroveGesture.Anticlockwise;
+                    result = gestureType.Anticlockwise;
                     break;
 
                 default:
                     data = this.paj7620ReadReg(0x44);
                     if (data == 0x01)
-                        result = GroveGesture.Wave;
+                        result = gestureType.Wave;
                     break;
             }
 
@@ -163,14 +148,13 @@ namespace grove {
     }
 
     const gestureEventId = 3100;
-    let lastGesture = GroveGesture.None;
+    let lastGesture = gestureType.None;
     let paj7620 = new PAJ7620();
 
     /**
-     * init Grove Gesture modules
-     * 
+     * init Gesture modules
      */
-    //% blockId=grove_initgesture block="init gesture"
+    //% blockId= initgesture block="init gesture"
     export function initGesture() {
         if (!paj7620) {
             paj7620.init();
@@ -178,21 +162,20 @@ namespace grove {
     }
 
     /**
-     * get Grove Gesture modle
-     * 
+     * get Gesture modle
      */
-    //% blockId=grove_getgesture block="get gesture model"
+    //% blockId= getgesture block="get gesture model"
     export function getGestureModel(): number {
         return paj7620.read();
     }
 
     /**
-     * Do something when a gesture is detected by Grove - Gesture
+     * Do something when a gesture is detected
      * @param gesture type of gesture to detect
      * @param handler code to run
      */
-    //% blockId=grove_gesture_create_event block="on Gesture|%gesture"
-    export function onGesture(gesture: GroveGesture, handler: () => void) {
+    //% blockId= gesture_create_event block="on Gesture|%gesture"
+    export function onGesture(gesture: gestureType, handler: () => void) {
         control.onEvent(gestureEventId, gesture, handler);
         paj7620.init();
         control.inBackground(() => {

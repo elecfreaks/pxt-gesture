@@ -1,0 +1,9 @@
+{
+  "gesture": "Functions to operate  module.",
+  "gesture.getGestureModel": "get Gesture modle",
+  "gesture.initGesture": "init Gesture modules",
+  "gesture.onGesture": "Do something when a gesture is detected",
+  "gesture.onGesture|param|gesture": "type of gesture to detect",
+  "gesture.onGesture|param|handler": "code to run",
+  "gestureType": "Gestures"
+}
